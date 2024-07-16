@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/favicon-32x32.png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap"
+    />
+    <title>Frontend Mentor | Multi-step form</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Ubuntu", sans-serif;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: hsl(229, 24%, 87%);
+      }
+
+      .container {
+        display: flex;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .sidebar {
+        background-image: url(assets/images/bg-sidebar-desktop.svg);
+        background-size: cover;
+        padding: 2rem 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 150px;
+        border-radius: 10px 0 0 10px;
+      }
+
+      .step {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        opacity: 1;
+        transition: opacity 0.3s;
+        padding: 10px 30px;
+        width: 100%;
+      }
+
+      .step.active {
+        opacity: 1;
+        font-weight: bold;
+      }
+
+      .step .circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .step .text {
+        color: #fff;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+      }
+      .step-indicator {
+        opacity: 0.4;
+      }
+      .form-container {
+        flex: 1;
+        padding: 2rem;
+      }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.active {
+        display: block;
+      }
+
+      h2 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: hsl(213, 96%, 18%);
+      }
+
+      p {
+        margin-bottom: 1.5rem;
+        color: hsl(231, 11%, 63%);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="radio"] {
+        display: block;
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid hsl(229, 24%, 87%);
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+      input:focus {
+        outline: none;
+        border-color: blue;
+      }
+      .invalid {
+        border-color: red !important;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+      }
+      input:invalid {
+        border-color: initial;
+      }
+
+      input:focus:invalid {
+        outline: none;
+        border-color: initial;
+      }
+
+      input:valid {
+        border-color: green;
+      }
+      .plans {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+      }
+
+      .plan {
+        border: 1px solid #dcdde1;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .plan:hover,
+      .plan.active {
+        border-color: #4834d4;
+        background-color: #dcdde1;
+      }
+
+      .billing {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 34px;
+        height: 20px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 12px;
+        width: 12px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #4834d4;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(14px);
+      }
+
+      .plan,
+      .addon {
+        margin-bottom: 1rem;
+      }
+
+      button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .next-step {
+        background-color: #3b3285;
+        color: hsl(229, 24%, 87%);
+        margin-left: 10px;
+      }
+
+      .prev-step {
+        background-color: #dcdde1;
+        color: hsl(233, 7%, 55%);
+      }
+      button.next-step:hover {
+        background-color: #2c244d;
+      }
+      button.prev-step:hover {
+        background-color: hsl(0, 0%, 100%);
+        color: hsl(231, 11%, 63%);
+      }
+      .button-container .next-step {
+        margin-left: auto;
+      }
+
+      .button-container .prev-step + .next-step {
+        margin-left: 0;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+      }
+
+      .summary {
+        background-color: hsl(229, 24%, 87%);
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+      }
+
+      .summary-plan,
+      .summary-addon,
+      .summary-total {
+        margin-bottom: 0.5rem;
+      }
+
+      .attribution {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .attribution a {
+        color: hsl(243, 100%, 62%);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="step active">
+          <span class="circle">1</span>
+          <span class="text"
+            ><span class="step-indicator">STEP 1</span><br />YOUR INFO</span
+          >
+        </div>
+        <div class="step">
+          <span class="circle">2</span>
+          <span class="text"
+            ><span class="step-indicator">STEP 2</span><br />SELECT PLAN</span
+          >
+        </div>
+        <div class="step">
+          <span class="circle">3</span>
+          <span class="text"
+            ><span class="step-indicator">STEP 3</span><br />ADD-ONS</span
+          >
+        </div>
+        <div class="step">
+          <span class="circle">4</span>
+          <span class="text"
+            ><span class="step-indicator">STEP 4</span><br />SUMMARY</span
+          >
+        </div>
+      </div>
+      <div class="form-container">
+        <form id="multiStepForm">
+          <!-- Step 1 -->
+          <div class="form-step active">
+            <h2>Personal info</h2>
+            <p>Please provide your name, email address, and phone number.</p>
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="e.g. Stephen King"
+              required
+            />
+            <span class="error-message"></span>
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="e.g. stephenking@lorem.com"
+              required
+            />
+            <span class="error-message"></span>
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="e.g. +1 234 567 890"
+              required
+              pattern="[0-9]+"
+              title="Please enter a valid phone number."
+            />
+            <span class="error-message"></span>
+            <div class="button-container">
+              <button type="button" class="next-step">Next Step</button>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="form-step">
+            <h2>Select your plan</h2>
+            <p>You have the option of monthly or yearly billing.</p>
+            <div class="plans">
+              <div class="plan" data-plan="arcade">
+                <p>Arcade</p>
+                <p>$9/mo</p>
+              </div>
+              <div class="plan" data-plan="advanced">
+                <p>Advanced</p>
+                <p>$12/mo</p>
+              </div>
+              <div class="plan" data-plan="pro">
+                <p>Pro</p>
+                <p>$15/mo</p>
+              </div>
+            </div>
+            <div class="billing">
+              <span>Monthly</span>
+              <label class="switch">
+                <input type="checkbox" id="billing-toggle" />
+                <span class="slider round"></span>
+              </label>
+              <span>Yearly</span>
+            </div>
+            <div class="button-container">
+              <button type="button" class="prev-step">Go Back</button>
+              <button type="button" class="next-step">Next Step</button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="form-step">
+            <h2>Add-ons</h2>
+            <p>Optional services for your plan.</p>
+            <div class="addon">
+              <input
+                type="checkbox"
+                id="online-service"
+                name="addons"
+                value="online-service"
+              />
+              <label for="online-service">Online service $1/mo</label>
+            </div>
+            <div class="addon">
+              <input
+                type="checkbox"
+                id="larger-storage"
+                name="addons"
+                value="larger-storage"
+              />
+              <label for="larger-storage">Larger storage $2/mo</label>
+            </div>
+            <div class="button-container">
+              <button type="button" class="prev-step">Go Back</button>
+              <button type="button" class="next-step">Next Step</button>
+            </div>
+          </div>
+          <!-- Step 4 -->
+          <div class="form-step">
+            <h2>Finishing up</h2>
+            <p>Double-check everything looks OK before confirming.</p>
+            <div class="summary">
+              <div class="summary-plan">Arcade (Monthly) $9/mo</div>
+              <div class="summary-addon">Online service $1/mo</div>
+              <div class="summary-addon">Larger storage $2/mo</div>
+              <div class="summary-total">Total per month: $12/mo</div>
+            </div>
+            <div class="button-container">
+              <button type="button" class="prev-step">Go Back</button>
+              <button type="submit">Confirm</button>
+            </div>
+          </div>
+        </form>
+        <div class="attribution">
+          Challenge by
+          <a href="https://www.frontendmentor.io">Frontend Mentor</a>. Coded by
+          <a href="#">OLAOYE TIMILEHIN MOSES</a>.
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("multiStepForm");
+        const steps = Array.from(form.querySelectorAll(".form-step"));
+        const nextBtns = Array.from(form.querySelectorAll(".next-step"));
+        const prevBtns = Array.from(form.querySelectorAll(".prev-step"));
+        const stepIndicators = Array.from(
+          document.querySelectorAll(".sidebar .step")
+        );
+        const billingToggle = document.getElementById("billing-toggle");
+        let currentStep = 0;
+
+        function updateSteps() {
+          steps.forEach((step, index) => {
+            step.classList.toggle("active", index === currentStep);
+          });
+          stepIndicators.forEach((indicator, index) => {
+            indicator.classList.toggle("active", index === currentStep);
+            const circle = indicator.querySelector(".circle");
+            if (index === currentStep) {
+              circle.style.backgroundColor = "#BFE2FD";
+              circle.style.color = "#000";
+            } else {
+              circle.style.backgroundColor = "transparent";
+              circle.style.color = "#fff";
+            }
+          });
+        }
+
+        function validateStep(stepIndex) {
+          const inputs = steps[stepIndex].querySelectorAll("input[required]");
+          let valid = true;
+
+          inputs.forEach((input) => {
+            const errorMessage = input.nextElementSibling;
+            if (!input.checkValidity()) {
+              valid = false;
+              input.classList.add("invalid");
+              errorMessage.textContent = input.validationMessage;
+              errorMessage.style.display = "block";
+            } else {
+              input.classList.remove("invalid");
+              errorMessage.textContent = "";
+              errorMessage.style.display = "none";
+            }
+          });
+
+          return valid;
+        }
+
+        nextBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (validateStep(currentStep)) {
+              if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateSteps();
+              }
+            }
+          });
+        });
+
+        prevBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (currentStep > 0) {
+              currentStep--;
+              updateSteps();
+            }
+          });
+        });
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (validateStep(currentStep)) {
+            updateSummary();
+            alert("Form submitted!");
+          }
+        });
+
+        function updateSummary() {
+          const plan = document.querySelector(".plan.active").dataset.plan;
+          const billing = billingToggle.checked ? "Yearly" : "Monthly";
+          const addons = Array.from(
+            document.querySelectorAll('input[name="addons"]:checked')
+          ).map((addon) => addon.labels[0].textContent);
+
+          const summaryPlan = document.querySelector(".summary-plan");
+          const summaryAddons = document.querySelectorAll(".summary-addon");
+          const summaryTotal = document.querySelector(".summary-total");
+
+          let planCost = 0;
+          switch (plan) {
+            case "arcade":
+              planCost = 9;
+              break;
+            case "advanced":
+              planCost = 12;
+              break;
+            case "pro":
+              planCost = 15;
+              break;
+          }
+
+          let billingCost = billing === "Yearly" ? planCost * 12 : planCost;
+          summaryPlan.textContent = `${plan} (${billing}) $${billingCost}/${
+            billing === "Yearly" ? "yr" : "mo"
+          }`;
+
+          let addonsCost = 0;
+          summaryAddons.forEach((summaryAddon, index) => {
+            if (addons[index]) {
+              const addonCost = parseInt(addons[index].match(/\d+/)[0]);
+              addonsCost += addonCost;
+              summaryAddon.textContent = addons[index];
+            } else {
+              summaryAddon.textContent = "";
+            }
+          });
+
+          let totalCost = billingCost + addonsCost;
+          summaryTotal.textContent = `Total per ${
+            billing === "Yearly" ? "year" : "month"
+          }: $${totalCost}/${billing === "Yearly" ? "yr" : "mo"}`;
+        }
+
+        document.querySelectorAll(".plan").forEach((plan) => {
+          plan.addEventListener("click", function () {
+            document
+              .querySelectorAll(".plan")
+              .forEach((p) => p.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
+
+        billingToggle.addEventListener("change", function () {
+          const isYearly = this.checked;
+          document.querySelectorAll(".plan").forEach((plan) => {
+            let priceText = plan.querySelector("p:nth-child(2)").textContent;
+            const price = parseInt(priceText.match(/\d+/)[0]);
+            if (isYearly) {
+              plan.querySelector("p:nth-child(2)").textContent = `$${
+                price * 10
+              }/yr`;
+            } else {
+              plan.querySelector("p:nth-child(2)").textContent = `$${
+                price / 10
+              }/mo`;
+            }
+          });
+        });
+
+        updateSteps();
+      });
+    </script>
+  </body>
+</html>
